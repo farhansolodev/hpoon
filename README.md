@@ -5,6 +5,7 @@ Harpoon like functionality in the terminal
     hpoon [dir] [opt-name]  | store a mark, optionally with a name
     hpoon                   | retrieve the last marked file or dir
     hpoon @[name]           | retrieve marked file with name
+    hpoon clean           | removes all hpoon history
 
 Can only mark files and directories that exist, but can retrieve
 marks that no longer exist on the filesystem
@@ -22,5 +23,5 @@ marks that no longer exist on the filesystem
     hpoon filename myfile           #harpoon a file with "myfile"
     rm filename
     cd /somewhere/else/entirely
-    mv some_file `hpoon @myfile` # result: mv that_file /original/path/filename
+    mv some_file `hpoon @myfile` # result: mv some_file /original/path/filename
 `
