@@ -43,7 +43,7 @@ const short_help = "Unsure arg, try -h to get usage information"
 const (
 	LAST_MARKED_KEY = "_"
 	KV_SEPERATOR    = "/"
-	NAME_REF        = "-"
+	NAME_REF        = "!"
 )
 
 var non_letters = regexp.MustCompile(`[^\p{L}]+`)
