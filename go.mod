@@ -1,3 +1,3 @@
-module drekipus/hpoon
+module github.com/farhansolodev/hpoon
 
 go 1.21
