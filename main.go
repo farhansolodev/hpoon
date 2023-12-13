@@ -61,12 +61,15 @@ func quit(msg string, printargs ...any) {
 	fmt.Printf(msg+"\n", printargs...)
 	os.Exit(1)
 }
+
 func exit() {
 	os.Exit(0)
 }
+
 func err(msg string, printargs ...any) error {
 	return fmt.Errorf(msg, printargs...)
 }
+
 func report(printargs ...string) {
 	fmt.Fprintln(os.Stderr, printargs)
 }
@@ -77,7 +80,6 @@ type HarpoonRecord struct {
 }
 
 func parse_hpoon_line(line string) (string, string, error) {
-
 	parts := strings.Split(line, KV_SEPERATOR)
 	if len(parts) != 2 {
 		return "", "", err("Invalid format of line: %s", line)
@@ -87,25 +89,22 @@ func parse_hpoon_line(line string) (string, string, error) {
 
 	// decode value to preserve filepath oddities
 	decoded_bytes, err := base64.StdEncoding.DecodeString(value)
-
 	if err != nil {
 		return "", "", err
 	}
 
 	return key, string(decoded_bytes), nil
 }
-func create_hpoon_line(key string, value string) string {
 
+func create_hpoon_line(key string, value string) string {
 	encoded_string := base64.StdEncoding.EncodeToString([]byte(value))
 
 	return fmt.Sprintf("%s%s%s", key, KV_SEPERATOR, encoded_string)
 }
 
 func read_hpoon_file(filename string) HarpoonRecord {
-
 	file, err := os.Open(filename)
 	if err != nil {
-
 		quit("Error reading hpoon marks file '%s'", filename)
 	}
 	defer file.Close()
@@ -139,6 +138,7 @@ func read_hpoon_file(filename string) HarpoonRecord {
 		marks:       data,
 	}
 }
+
 func write_hpoon_file(data HarpoonRecord, filename string) {
 	file, err := os.Create(filename)
 	if err != nil {
@@ -175,7 +175,6 @@ func write_hpoon_file(data HarpoonRecord, filename string) {
 		_, err = file.WriteString(line + "\n")
 		check_err(line)
 	}
-
 }
 
 func load_hpoon() HarpoonRecord {
@@ -186,12 +185,13 @@ func load_hpoon() HarpoonRecord {
 
 	return read_hpoon_file(hpoon_file)
 }
+
 func save_hpoon(data HarpoonRecord) {
 	write_hpoon_file(data, getHpoonFile())
 }
 
 func run_no_arg() {
-	//no arg given, return the last given harpooned file
+	// no arg given, return the last given harpooned file
 	fmt.Print(*hpoon_get_mark(nil))
 }
 
@@ -199,6 +199,7 @@ func check_path_exists(fpath string) bool {
 	_, err := os.Stat(fpath)
 	return !os.IsNotExist(err)
 }
+
 func hpoon_set_mark(fpath string, name *string) {
 	data := load_hpoon()
 	data.last_marked = fpath
@@ -207,6 +208,7 @@ func hpoon_set_mark(fpath string, name *string) {
 	}
 	save_hpoon(data)
 }
+
 func hpoon_get_mark(name *string) *string {
 	data := load_hpoon()
 	if name == nil {
@@ -272,7 +274,6 @@ func run_double_arg(arg string, name string) {
 }
 
 func main() {
-
 	switch len(os.Args) {
 	case 1:
 		run_no_arg()
@@ -283,5 +284,4 @@ func main() {
 	default:
 		quit(short_help)
 	}
-
 }
