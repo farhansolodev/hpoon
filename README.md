@@ -5,6 +5,7 @@ Harpoon like functionality in the terminal
     hpoon <path> [name]         | store a mark, optionally with a name
     hpoon                       | retrieve the last marked path
     hpoon !<name>               | retrieve marked path with name (mark is recognized by prefix "!")
+    hpoon list                  | list all named marked paths
     hpoon clean                 | delete all hpoon history
 
 Can only mark files and directories that exist, but can retrieve

@@ -17,6 +17,7 @@ Usage:
     hpoon <path> [name]         | store a mark, optionally with a name
     hpoon                       | retrieve the last marked path
     hpoon !<name>               | retrieve marked path with name (mark is recognized by prefix "!")
+    hpoon list                  | list all named marked paths
     hpoon clean                 | delete all hpoon history
 
     can only mark files and directories that exist, but can retreive
@@ -46,15 +47,6 @@ const (
 	NAME_REF        = "!"
 )
 
-func getHpoonFile() string {
-	switch runtime.GOOS {
-	case "windows":
-		return "C:\\Windows\\Temp\\hpoon"
-	default:
-		return "/tmp/hpoon"
-	}
-}
-
 func quit(msg string, printargs ...any) {
 	fmt.Printf(msg+"\n", printargs...)
 	os.Exit(1)
@@ -75,6 +67,15 @@ func report(printargs ...string) {
 type HarpoonRecord struct {
 	last_marked string
 	marks       map[string]string
+}
+
+func get_hpoon_file() string {
+	switch runtime.GOOS {
+	case "windows":
+		return "C:\\Windows\\Temp\\hpoon"
+	default:
+		return "/tmp/hpoon"
+	}
 }
 
 func parse_hpoon_line(line string) (string, string, error) {
@@ -176,7 +177,7 @@ func write_hpoon_file(data HarpoonRecord, filename string) {
 }
 
 func load_hpoon() HarpoonRecord {
-	hpoon_file := getHpoonFile()
+	hpoon_file := get_hpoon_file()
 	if !check_path_exists(hpoon_file) {
 		os.Create(hpoon_file)
 	}
@@ -185,12 +186,18 @@ func load_hpoon() HarpoonRecord {
 }
 
 func save_hpoon(data HarpoonRecord) {
-	write_hpoon_file(data, getHpoonFile())
+	write_hpoon_file(data, get_hpoon_file())
 }
 
 func run_no_arg() {
-	// no arg given, return the last given harpooned file
-	fmt.Print(*hpoon_get_mark(nil))
+	mark, err := hpoon_get_mark(nil)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	// no arg given, print the last given harpooned file
+	fmt.Print(*mark)
 }
 
 func check_path_exists(fpath string) bool {
@@ -207,16 +214,16 @@ func hpoon_set_mark(fpath string, name *string) {
 	save_hpoon(data)
 }
 
-func hpoon_get_mark(name *string) *string {
+func hpoon_get_mark(name *string) (*string, error) {
 	data := load_hpoon()
 	if name == nil {
-		return &data.last_marked
+		return &data.last_marked, nil
 	}
 	value, exists := data.marks[*name]
 	if !exists {
-		return nil
+		return nil, fmt.Errorf("mark '%s' does not exist", *name)
 	}
-	return &value
+	return &value, nil
 }
 
 func check_name_ref(arg string) bool {
@@ -225,12 +232,25 @@ func check_name_ref(arg string) bool {
 
 func hpoon_out_mark_at(arg string) {
 	name := arg[len(NAME_REF):]
-	data := hpoon_get_mark(&name)
-	fmt.Print(*data)
+	mark, err := hpoon_get_mark(&name)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	fmt.Print(*mark)
+}
+
+func hpoon_list() {
+	record := load_hpoon()
+	output := ""
+	for mark, path := range record.marks {
+		output = output + fmt.Sprintf("%s: %s", mark, path)
+	}
+	fmt.Print(output)
 }
 
 func hpoon_clean() {
-	os.Remove(getHpoonFile())
+	os.Remove(get_hpoon_file())
 }
 
 func run_single_arg(arg string) {
@@ -239,6 +259,8 @@ func run_single_arg(arg string) {
 		fmt.Print(help_str)
 	case "clean":
 		hpoon_clean()
+	case "list":
+		hpoon_list()
 	default:
 		// we check if it's a name
 		if check_name_ref(arg) {
