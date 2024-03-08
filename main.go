@@ -46,8 +46,6 @@ const (
 	NAME_REF        = "!"
 )
 
-var non_letters = regexp.MustCompile(`[^\p{L}]+`)
-
 func getHpoonFile() string {
 	switch runtime.GOOS {
 	case "windows":
