@@ -23,4 +23,4 @@ marks that no longer exist on the filesystem
     hpoon filename myfile   #harpoon a file with "myfile"
     rm filename
     cd /somewhere/else/entirely
-    mv some_file `hpoon @myfile`   # result: mv some_file /original/path/filename
+    mv some_file `hpoon !myfile`   # result: mv some_file /original/path/filename
