@@ -283,14 +283,14 @@ func run_single_arg(arg string) {
 }
 
 func run_double_arg(arg string, name string) {
-	path, err := filepath.Abs(arg)
-	if err != nil {
-		quit("Not sure how to expand '%s'", arg)
+	// path, err := filepath.Abs(arg)
+	// if err != nil {
+	// 	quit("Not sure how to expand '%s'", arg)
+	// }
+	if !check_path_exists(arg) {
+		quit("Filepath doesn't exist: '%s'", arg)
 	}
-	if !check_path_exists(path) {
-		quit("Filepath doesn't exist: '%s'", path)
-	}
-	hpoon_set_mark(path, &name)
+	hpoon_set_mark(arg, &name)
 }
 
 func main() {
