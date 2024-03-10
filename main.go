@@ -244,7 +244,7 @@ func hpoon_list() {
 	record := load_hpoon()
 	output := ""
 	for mark, path := range record.marks {
-		output = output + fmt.Sprintf("%s: %s", mark, path)
+		output = output + fmt.Sprintf("%s: %s\n", mark, path)
 	}
 	fmt.Print(output)
 }
