@@ -14,10 +14,16 @@
 !go.sum
 !go.mod
 
-!README.md
+!*.md
 !LICENSE
 
-# !Makefile
+!Makefile
+
+!*.json
+!*.yaml
+!*.yml
 
 # ...even if they are in subdirectories
 !*/
+
+.vscode
