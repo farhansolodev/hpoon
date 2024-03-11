@@ -290,6 +290,10 @@ func run_double_arg(arg string, name string) {
 	if !check_path_exists(arg) {
 		quit("Filepath doesn't exist: '%s'", arg)
 	}
+	if arg == "." {
+		cwd, _ := os.Getwd()
+		arg = cwd
+	}
 	hpoon_set_mark(arg, &name)
 }
 
